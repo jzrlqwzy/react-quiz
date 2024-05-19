@@ -1,15 +1,10 @@
 // import DateCounter from "./DateCounter.js";
-
-// export default function App() {
-//   return (
-//     <div>
-//       <DateCounter />
-//     </div>
-//   );
-// }
 import { useEffect, useReducer } from "react";
 import Header from "./Header";
 import Main from "./Main";
+import Loader from "./Loader";
+import Error from "./Error";
+import StartScreen from "./StartScreen";
 
 const initalState = {
   questions: [],
@@ -29,7 +24,8 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, initalState);
+  const [{ questions, status }, dispatch] = useReducer(reducer, initalState);
+  const numQuestions = questions.length;
 
   useEffect(function () {
     fetch("http://localhost:8000/questions")
@@ -42,10 +38,12 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* <DateCounter /> */}
       <Header />
       <Main>
-        <p>1/15</p>
-        <p>Questions?</p>
+        {status === "loading" && <Loader />}
+        {status === "error" && <Error />}
+        {status === "ready" && <StartScreen numQuestions={numQuestions} />}
       </Main>
     </div>
   );
